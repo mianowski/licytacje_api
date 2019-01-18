@@ -6,7 +6,9 @@ import urllib.parse
 from bs4 import BeautifulSoup
 import re
 from babel.numbers import parse_decimal
-from notice import Notice
+import pandas as pd
+
+import notice
 
 
 """
@@ -27,9 +29,17 @@ Cookie: ASP.NET_SessionId=lrdwev2kco0bidh5f2lsmnph; licytacje.komornik.pl=cookie
 """
 NODE_URL = "http://www.licytacje.komornik.pl"
 
-def get_html_soup(data):
-    r = requests.post(NODE_URL+"/Notice/Search", data=data)
-    return BeautifulSoup(r.content, 'html.parser')
+def get_search_soup(data):
+    return make_soup(requests.post(NODE_URL+"/Notice/Search", data=data))
+
+def get_notice_soup(id):
+    return make_soup(requests.get(NODE_URL+"/Notice/Details/"+str(id)))
+
+def get_soup(url):
+    return make_soup(requests.get(url))
+
+def make_soup(result):
+    return BeautifulSoup(result.content, 'html.parser')
 
 # encoded_data = "Type=1&CategoryId=&MobilityCategoryId=&PropertyCategoryId=30&City=Wroc%C5%82aw&tbx-province=&ProvinceId=&AuctionsDate=&Words=&PriceFrom=&PriceTo=&ItemMin=&ItemMax=&OfficeId=&JudgmentId=&PublicationDateFrom=&PublicationDateTo=&StartDateFrom=&StartDateTo=&SumMin=&SumMax=&Vat=&TypeOfAuction="
 # data = urllib.parse.parse_qs(encoded_data)
@@ -50,26 +60,29 @@ def parse_price(text):
 
 def get_report():
     data = {
-        'Type': ['2'], 
+        'Type': ['1'], 
         'City': ['Wrocław'],
         # 'JudgmentId': ['1103']
         }
 
-    soup = get_html_soup(data)
+    soup = get_search_soup(data)
     notices = get_notices(soup)
     rows = get_rows(soup)
     notices = []
     for row in rows[1:]:
         cols = get_cols(row)
-        notice = Notice(
-            date=cols[2].get_text(strip=True),
-            url=NODE_URL + cols[7].contents[1].get('href'),
-            price=parse_price(cols[6].get_text(strip=True))
-        )
-        print(notice)
+        url = NODE_URL + cols[7].contents[1].get('href')
+        auction = {
+            'date': cols[2].get_text(strip=True),
+            'url' : url,
+            'price' : parse_price(cols[6].get_text(strip=True)),
+            'kw' : notice.get_kw_number(notice.get_preview(get_soup(url)))
+        }
+        print(auction)
 
 if __name__=="__main__":
     get_report()
     # print(parse_price('3\xa0750\xa0987,00 zł'))
-
+    # page = get_notice_soup(455697)
+    # print(notice.get_kw_number(notice.get_preview(page)))
     
