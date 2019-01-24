@@ -66,9 +66,9 @@ def get_report():
         }
 
     soup = get_search_soup(data)
-    notices = get_notices(soup)
+    
     rows = get_rows(soup)
-    notices = []
+    auctions = []
     for row in rows[1:]:
         cols = get_cols(row)
         url = NODE_URL + cols[7].contents[1].get('href')
@@ -78,11 +78,13 @@ def get_report():
             'price' : parse_price(cols[6].get_text(strip=True)),
             'kw' : notice.get_kw_number(notice.get_preview(get_soup(url)))
         }
-        print(auction)
+        auctions.append(auction)
+    return pd.DataFrame(auctions)
+    
+
 
 if __name__=="__main__":
-    get_report()
-    # print(parse_price('3\xa0750\xa0987,00 zł'))
-    # page = get_notice_soup(455697)
-    # print(notice.get_kw_number(notice.get_preview(page)))
+    auctions = get_report()
+    print(auctions.sort_values("price"))
+
     
