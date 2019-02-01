@@ -56,22 +56,18 @@ def get_report():
         cols = get_cols(row)
         url = NODE_URL + cols[7].contents[1].get('href')
         cur_notice = notice.Notice(url)
-        preview = cur_notice.get_preview(get_soup(url))
+        
         auction = {
             'date': cols[2].get_text(strip=True),
             'url' : url,
             'price' : parse_price(cols[6].get_text(strip=True)),
-            'kw' : cur_notice.get_kw_number(preview),
-            'address': cur_notice.get_address(preview)
+            'kw' : cur_notice.get_kw_number(),
+            'address': cur_notice.get_address()
         }
         auctions.append(auction)
     return pd.DataFrame(auctions)
-    
-
 
 if __name__=="__main__":
     pd.options.display.max_colwidth = 100
     auctions = get_report()
     print(auctions.sort_values("price"))
-
-    
