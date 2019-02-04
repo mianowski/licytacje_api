@@ -70,4 +70,4 @@ def get_report():
 if __name__=="__main__":
     pd.options.display.max_colwidth = 100
     auctions = get_report()
-    print(auctions.sort_values("price"))
+    print(auctions.sort_values("price")[['address', 'url']])
