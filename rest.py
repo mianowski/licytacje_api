@@ -46,6 +46,29 @@ def get_report():
         'Type': ['1'], 
         'City': ['Wrocław'],
         # 'JudgmentId': ['1103']
+                
+        # 'CategoryId': []
+        # 'MobilityCategoryId': 
+        # 'PropertyCategoryId': 
+        # 'City': Wrocław
+        # 'tbx-province': 
+        # 'ProvinceId': 
+        # 'AuctionsDate': 
+        # 'Words': 
+        # 'PriceFrom': 
+        # 'PriceTo': 
+        # 'ItemMin': 
+        # 'ItemMax': 
+        # 'OfficeId': 
+        # 'JudgmentId': 
+        # 'PublicationDateFrom': [08.02.2019]
+        # 'PublicationDateTo': 
+        # 'StartDateFrom': 
+        # 'StartDateTo': 
+        # 'SumMin': 
+        # 'SumMax': 
+        # 'Vat': 
+        # 'TypeOfAuction': 
         }
 
     soup = get_search_soup(data)
