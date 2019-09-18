@@ -13,14 +13,18 @@ class Notice():
     def __repr__(self):
         return str(self.url)
 
+    def save_to_file(self, uri: str):
+        with open(uri, "w+") as f:
+            f.write(self.preview.prettify())
+
     def get_details(self, url):
         return make_soup(requests.get(url))
 
 
-    def get_preview(self, details_soup):
+    def get_preview(self, details_soup: BeautifulSoup):
         return details_soup.find("div", {"id": "Preview"})
 
-    def get_important(self, preview_soup):
+    def get_important(self, preview_soup: BeautifulSoup):
         return [item.get_text() for item in preview_soup.find_all("strong")]
 
     def get_kw_number(self):
@@ -29,7 +33,6 @@ class Notice():
         kw_list = list(filter(is_kw_number, importants))
         if kw_list:
             number = kw_list[0]
-
         return number
 
 

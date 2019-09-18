@@ -8,6 +8,6 @@ def get_osm_link(address: str):
 
 
 if __name__=="__main__":
-    address = "Kłokoczycka 180, 51-376 Wrocław"
+    address = "Rynek, Wrocław"
     print(get_gmaps_link(address))
     print(get_osm_link(address))
