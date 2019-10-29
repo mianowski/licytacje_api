@@ -45,11 +45,10 @@ def parse_price(text: str):
 def get_current_date():
     return date.today().strftime("%d.%m.%Y")
 
-def get_report(data: dict):
-
+def get_report(data: dict) -> dict:
 
     soup = get_search_soup(data)
-    
+
     rows = get_rows(soup)
     auctions = []
     for row in rows[1:]:
@@ -69,7 +68,7 @@ def get_report(data: dict):
 
             file_path = os.path.join("notices", auction['date'].strftime("%Y%m%d")+"-"+str(auction["price"].to_integral_exact()))
             cur_notice.save_to_file(file_path)
-    return pd.DataFrame(auctions)
+    return auctions
 
 if __name__=="__main__":
     
@@ -111,7 +110,10 @@ if __name__=="__main__":
         }
         ]
 
-    auctions = pd.concat([get_report(data) for data in data_list])
+    import pandas as pd
+
+    auctions = sum(map(get_report, data_list),[])
+    auctions_df = pd.DataFrame(auctions)
     pd.options.display.max_colwidth = 100
-    if not auctions.empty:
-        print(auctions.sort_values("price")[['address', 'url']])
+    if not auctions_df.empty:
+        print(auctions_df.sort_values("price")[['address', 'url']])
