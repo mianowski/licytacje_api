@@ -15,6 +15,8 @@ from datetime import datetime
 
 import notice
 from bs_helpers import make_soup
+from database import open_db, populate_db
+import sqlite3
 
 NODE_URL = "http://www.licytacje.komornik.pl"
 
@@ -64,9 +66,10 @@ def get_report(data: dict) -> dict:
                 'kw' : cur_notice.get_kw_number(),
                 'address': cur_notice.get_address()
             }
+            auction['id'] = auction['date'].strftime("%Y%m%d")+"-"+str(auction["price"].to_integral_exact())
             auctions.append(auction)
 
-            file_path = os.path.join("notices", auction['date'].strftime("%Y%m%d")+"-"+str(auction["price"].to_integral_exact()))
+            file_path = os.path.join("notices", auction['id'])
             cur_notice.save_to_file(file_path)
     return auctions
 
@@ -110,9 +113,17 @@ if __name__=="__main__":
         }
         ]
 
-    import pandas as pd
-
     auctions = sum(map(get_report, data_list),[])
+    try:
+        with open_db() as con:
+            table_name = 'auctions'
+
+            populate_db(auctions, table_name, con)
+    except sqlite3.IntegrityError as e:
+        print(e.args)
+
+
+    import pandas as pd
     auctions_df = pd.DataFrame(auctions)
     pd.options.display.max_colwidth = 100
     if not auctions_df.empty:
