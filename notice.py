@@ -44,7 +44,9 @@ def get_address_from_text(text: str):
     address_regex = re.compile(r"(?:położon)(?:ej|ego|ym)(?: przy)?(?::)? (.*?),(.*?)(?:,|dla| Sąd| wpisanego)")
     address = ""
     try:
-        address = ''.join(address_regex.search(text).groups())
+        match = address_regex.search(text).group(0)
+        match_groups = address_regex.search(text).groups()
+        address = ''.join(match_groups)
     except:
         logging.error("Unable to find address for text: %s", text)
         pass

@@ -1,22 +1,15 @@
-import platform
-import sys
 import os
 import requests
 import unicodedata
 import urllib.parse
 
-
-import re
 from babel.numbers import parse_decimal
-
-import pandas as pd
 from datetime import date
 from datetime import datetime
 
 import notice
 from bs_helpers import make_soup
-from database import open_db, populate_db
-import sqlite3
+
 
 NODE_URL = "http://www.licytacje.komornik.pl"
 
@@ -73,58 +66,34 @@ def get_report(data: dict) -> dict:
             cur_notice.save_to_file(file_path)
     return auctions
 
+
 if __name__=="__main__":
+    import sqlite3
+    import json
+    from database import open_db, populate_db, create_db_table
+    import pandas as pd
+
+
+    def display_auctions(auctions):
+        auctions_df = pd.DataFrame(auctions)
+        pd.options.display.max_colwidth = 100
+        if not auctions_df.empty:
+            print(auctions_df.sort_values("price")[['address', 'url']])
+
+
+    def save_auctions_to_db(auctions):
+        try:
+            with open_db() as con:
+                table_name = 'auctions'
+                create_db_table(table_name, {'id': 'varchar(16)', 'data': 'json'}, con)
+                populate_db(auctions, table_name, con)
+        except sqlite3.IntegrityError as e:
+            print(e.args)    
     
-    
-    data_list = [
-        {
-            'Type': ['1'], 
-            'City': ['Wrocław'],
-            # 'PublicationDateFrom': [get_current_date()]
-            # 'PublicationDateFrom': ['12.04.2019']
-            # 'JudgmentId': ['1103']
-                    
-            # 'CategoryId': []
-            # 'MobilityCategoryId': 
-            # 'PropertyCategoryId': 
-            # 'City': Wrocław
-            # 'tbx-province': 
-            # 'ProvinceId': 
-            # 'AuctionsDate': 
-            # 'Words': 
-            # 'PriceFrom': 
-            # 'PriceTo': 
-            # 'ItemMin': 
-            # 'ItemMax': 
-            # 'OfficeId': 
-            # 'JudgmentId': 
-            # 'PublicationDateFrom': [08.02.2019]
-            # 'PublicationDateTo': 
-            # 'StartDateFrom': 
-            # 'StartDateTo': 
-            # 'SumMin': 
-            # 'SumMax': 
-            # 'Vat': 
-            # 'TypeOfAuction': 
-        },
-        {
-            'Type': ['1'], 
-            'City': ['Wrocławiu']
-        }
-        ]
+
+    with open("config.json") as config_file:
+        data_list = json.load(config_file)
 
     auctions = sum(map(get_report, data_list),[])
-    try:
-        with open_db() as con:
-            table_name = 'auctions'
-
-            populate_db(auctions, table_name, con)
-    except sqlite3.IntegrityError as e:
-        print(e.args)
-
-
-    import pandas as pd
-    auctions_df = pd.DataFrame(auctions)
-    pd.options.display.max_colwidth = 100
-    if not auctions_df.empty:
-        print(auctions_df.sort_values("price")[['address', 'url']])
+    save_auctions_to_db(auctions)
+    display_auctions(auctions)
