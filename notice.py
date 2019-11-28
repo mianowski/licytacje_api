@@ -41,7 +41,7 @@ class Notice():
         return get_address_from_text(text)
     
 def get_address_from_text(text: str):
-    address_regex = re.compile(r"(?:położon)(?:ej|ego|ym)(?: przy)?(?::)? (.*?),(.*?)(?:,|dla| Sąd| wpisanego)")
+    address_regex = re.compile(r"(?:(?:(?:położon)(?:ej|ego|ym)(?: przy)?(?::)? )|(?:xxx przy )|(?:przy\\xa0))(.*?),(.*?)(?:,|dla| Sąd| wpisanego)")
     address = ""
     try:
         match = address_regex.search(text).group(0)
