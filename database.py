@@ -11,9 +11,7 @@ def create_db_table(table_name: str, schema: dict, conn: sqlite3.Connection):
     cursor = conn.cursor()
     schema_str = ', '.join([str(k)+' '+str(v) for k, v in schema.items()])
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS "+table_name+" ("+schema_str+")"
-            
-            )
+    cursor.execute("CREATE TABLE IF NOT EXISTS "+table_name+" ("+schema_str+")")
 
 def populate_db(list_of_dicts: list, table_name: str, conn: sqlite3.Connection):
     cursor = conn.cursor()

@@ -1,6 +1,6 @@
 import sys
 import json
-
+import pprint
 import sqlite3
 
 from rest import get_report
@@ -8,12 +8,8 @@ from database import open_db, create_db_table, populate_db
 
 
 def display_auctions(auctions):
-    import pandas as pd
-    auctions_df = pd.DataFrame(auctions)
-    pd.options.display.max_colwidth = 100
-    if not auctions_df.empty:
-        print(auctions_df.sort_values("price")[['address', 'url']])
-
+    for auction in auctions:
+        pprint.pprint(auction, indent=4)
 
 def save_auctions_to_db(auctions):
     try:
@@ -69,10 +65,12 @@ def auctions():
         data_list = json.load(config_file)
 
     auctions = sum(map(get_report, data_list),[])
+    auctions.sort(key=lambda auction: auction["price"])
     save_auctions_to_db(auctions)
     display_auctions(auctions)
 
 
 if __name__=="__main__":
     auctions()
+
 
