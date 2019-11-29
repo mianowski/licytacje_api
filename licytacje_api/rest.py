@@ -62,7 +62,7 @@ def get_report(data: dict) -> dict:
             auction['id'] = auction['date'].strftime("%Y%m%d")+"-"+str(auction["price"].to_integral_exact())
             auctions.append(auction)
 
-            file_path = os.path.join("notices", auction['id'])
+            file_path = os.path.join("..","notices", auction['id'])
             cur_notice.save_to_file(file_path)
     return auctions
 

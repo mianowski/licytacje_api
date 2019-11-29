@@ -1,4 +1,3 @@
-licytacje-project.json
+licytacje_api/auctions.db
 notices/
-newsletter/
-licytacje-project*
+licytacje_api.egg-info

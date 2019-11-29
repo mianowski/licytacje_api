@@ -3,7 +3,7 @@ import json
 
 
 def open_db():
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect('auctions.db')
     print("Opened database successfully")
     return conn
 
