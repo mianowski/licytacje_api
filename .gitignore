@@ -1,3 +1,6 @@
 licytacje_api/auctions.db
 notices/
 licytacje_api.egg-info
+auctions.db
+config.json
+*.pyc
