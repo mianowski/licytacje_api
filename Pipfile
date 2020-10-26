@@ -10,8 +10,8 @@ rope = "*"
 [packages]
 babel = "*"
 requests = "*"
-bs4 = "*"
 pytest = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3"

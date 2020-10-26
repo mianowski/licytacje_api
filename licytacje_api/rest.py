@@ -19,8 +19,7 @@ NODE_URL = "https://licytacje.komornik.pl"
 def get_search_soup(data: dict):
     initial_resp = requests.get(NODE_URL+"/Notice/Search")
     initial_soup = make_soup(initial_resp)
-    ver_token = get_verification_token(initial_soup)
-    data["__RequestVerificationToken"] = ver_token
+    data["__RequestVerificationToken"] = get_verification_token(initial_soup)
     resp = requests.post(NODE_URL+"/Notice/Search",
                          data=data, cookies=initial_resp.cookies)
     return make_soup(resp)
@@ -63,9 +62,7 @@ def get_current_date():
 
 
 def get_report(data: dict) -> dict:
-
     soup = get_search_soup(data)
-
     rows = get_rows(soup)
     auctions = []
     for row in rows[1:]:
