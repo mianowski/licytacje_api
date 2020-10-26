@@ -9,6 +9,9 @@ rope = "*"
 
 [packages]
 babel = "*"
+requests = "*"
+bs4 = "*"
+pytest = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3"

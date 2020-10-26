@@ -3,8 +3,8 @@ import json
 import pprint
 import sqlite3
 
-from rest import get_report
-from database import open_db, create_db_table, populate_db
+from licytacje_api.rest import get_report
+from licytacje_api.database import open_db, create_db_table, populate_db
 
 
 def display_auctions(auctions):
