@@ -90,38 +90,3 @@ def get_report(data: dict) -> dict:
             file_path = os.path.join(files_dir, auction['id'])
             cur_notice.save_to_file(file_path)
     return auctions
-
-
-if __name__ == "__main__":
-    # data = {'City': ['Wrocław'], 'Type': ['1']}
-    # search_soup = get_search_soup(data)
-
-    import sqlite3
-    import json
-
-    import pandas as pd
-
-    from database import open_db, populate_db, create_db_table
-
-    def display_auctions(auctions):
-        auctions_df = pd.DataFrame(auctions)
-        pd.options.display.max_colwidth = 100
-        if not auctions_df.empty:
-            print(auctions_df.sort_values("price")[['address', 'url']])
-
-    def save_auctions_to_db(auctions):
-        try:
-            with open_db() as con:
-                table_name = 'auctions'
-                create_db_table(
-                    table_name, {'id': 'varchar(16)', 'data': 'json'}, con)
-                populate_db(auctions, table_name, con)
-        except sqlite3.IntegrityError as e:
-            print(e.args)
-
-    with open("config.json") as config_file:
-        data_list = json.load(config_file)
-
-    auctions = sum(map(get_report, data_list), [])
-    save_auctions_to_db(auctions)
-    display_auctions(auctions)
